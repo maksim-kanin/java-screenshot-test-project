@@ -1,0 +1,64 @@
+plugins {
+    id 'java'
+    id "io.qameta.allure" version "2.9.6"
+    id "io.freefair.aspectj.post-compile-weaving" version "6.4.1"
+}
+
+group 'ai.neuraloom'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+def JUNIT = "5.8.2"
+def SELENIDE = "6.4.0"
+def OWNER = "1.0.12"
+def ASHOT = "1.5.4"
+def ASSERTJ = "3.21.0"
+def ASPECTJ = "1.9.2"
+def FREEMARKER = "2.3.31"
+
+dependencies {
+    implementation("org.junit.jupiter:junit-jupiter:$JUNIT",
+            "com.codeborne:selenide:$SELENIDE",
+            "org.aeonbits.owner:owner:$OWNER",
+            "ru.yandex.qatools.ashot:ashot:$ASHOT",
+            "org.assertj:assertj-core:$ASSERTJ",
+            "org.aspectj:aspectjweaver:$ASPECTJ",
+            "org.aspectj:aspectjrt:$ASPECTJ",
+            "org.freemarker:freemarker:$FREEMARKER")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$JUNIT")
+}
+
+allure {
+    report {
+        version.set("2.17.3")
+    }
+    adapter {
+        frameworks {
+            junit5 {
+                adapterVersion.set("2.17.3")
+            }
+        }
+    }
+}
+
+tasks.withType(Test) {
+    systemProperties(System.getProperties())
+    useJUnitPlatform()
+    systemProperties += [
+            'junit.jupiter.execution.parallel.enabled'                 : true,
+            'junit.jupiter.execution.parallel.mode.default'            : 'concurrent',
+            'junit.jupiter.execution.parallel.mode.classes.default'    : 'concurrent',
+            'junit.jupiter.execution.parallel.config.strategy'         : 'fixed',
+            'junit.jupiter.execution.parallel.config.fixed.parallelism': 3
+    ]
+}
+
+task deleteAllure(type: Delete) {
+    delete "${buildDir}/reports/allure-report"
+    delete "${buildDir}/allure-results"
+}
+
+testClasses.finalizedBy(deleteAllure)

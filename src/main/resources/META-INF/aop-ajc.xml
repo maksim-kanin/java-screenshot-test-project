@@ -1,0 +1,10 @@
+<aspectj>
+    <aspects>
+        <aspect name="com.neuraloom.ui.aspects.ScreenshotAssertionsAspects"/>
+        <aspect name="com.neuraloom.ui.aspects.allure.AttachmentsAspects"/>
+        <aspect name="com.neuraloom.ui.aspects.allure.StepsAspects"/>
+        <weaver options="">
+            <include within="com.neuraloom.ui.aspects.*"/>
+        </weaver>
+    </aspects>
+</aspectj>

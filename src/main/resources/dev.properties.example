@@ -1,0 +1,5 @@
+baseURL=${baseURL}
+browser.size=${browser.size}
+chrome.version=${chrome.version}
+firefox.version=${forefox.version}
+selenoid.url=${selenoid.url}
