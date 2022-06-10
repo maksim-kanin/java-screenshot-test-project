@@ -30,25 +30,22 @@
             },
             "content": document.getElementById("${id}-actual").src.replace("data:image/png;base64,", "")
         };
-        let refResponse = checkReference(url)
-        if (refResponse.ok) {
-            body.message = "Update screenshot " + referencePath
-            body.sha = await response.json().sha;
-            await post(url, body)
-        } else {
-            body.message = "Save screenshot " + referencePath
-            await post(url, body)
-        }
-    }
-
-    async function checkReference(url) {
-        return await fetch(url, {
+        let refResponse = await fetch(url, {
             method: 'GET',
             headers: {
                 "Accept": "application/vnd.github.v3+json",
                 "Authorization": "Bearer " + localStorage.getItem("gitHubToken")
             }
         });
+        if (refResponse.ok) {
+            let json = await refResponse.json();
+            body.message = "Update screenshot " + referencePath
+            body.sha = json.sha;
+            await post(url, body)
+        } else {
+            body.message = "Save screenshot " + referencePath
+            await post(url, body)
+        }
     }
 
     async function post(url, body) {
