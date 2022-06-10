@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'java-library-distribution'
+}
+
+repositories {
+    mavenCentral()
+}
+def ALLURE = "2.17.3"
+
+distributions {
+    main {
+        distributionBaseName = 'github-plugin'
+    }
+}
+
+dependencies {
+    compileOnly("io.qameta.allure:allure-plugin-api:$ALLURE")
+}

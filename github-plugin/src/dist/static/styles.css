@@ -1,0 +1,9 @@
+.github-logo {
+    background-image: url("github-logo.png");
+    width: 24px;
+    height: 24px;
+}
+
+#content .app__content > div {
+    height: 100%;
+}

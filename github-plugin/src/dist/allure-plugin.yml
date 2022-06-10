@@ -1,0 +1,7 @@
+id: github-login
+name: GitHub login tab
+description: Use GitHub user/password for commiting screenshots
+jsFiles:
+  - index.js
+cssFiles:
+  - styles.css

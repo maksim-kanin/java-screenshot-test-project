@@ -23,7 +23,6 @@ import java.util.UUID;
 
 import static io.qameta.allure.util.ResultsUtils.getStatus;
 import static io.qameta.allure.util.ResultsUtils.getStatusDetails;
-import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -51,8 +50,8 @@ public class ScreenshotAssertionsAspects {
         return Base64.getEncoder().encodeToString(bytes);
     }
 
-    @Pointcut("execution(public void com.neuraloom.ui.screenshot.ScreenShooter.save(..))")
-    public void savePointcut() {
+    @Pointcut("execution(* com.neuraloom.ui.screenshot.ScreenShooter.noReference(..))")
+    public void noRefPointcut() {
     }
 
     @Pointcut("execution(* com.neuraloom.ui.screenshot.ScreenShooter.comparisonPassed(..))")
@@ -63,22 +62,23 @@ public class ScreenshotAssertionsAspects {
     public void hasDiffPointcut() {
     }
 
-    @Around("savePointcut()")
+    @Around("noRefPointcut()")
     public Object noReferenceStep(ProceedingJoinPoint joinPoint) throws Throwable {
-        String name = (String) joinPoint.getArgs()[0];
         String uuid = UUID.randomUUID().toString();
-        getLifecycle().startStep(uuid, new StepResult().setName(format("No reference screenshot [%s] for comparison:", name)));
+        getLifecycle().startStep(uuid, new StepResult().setName("No reference screenshot for comparison"));
         try {
             return joinPoint.proceed();
         } catch (Throwable throwable) {
             if (throwable instanceof NoReferenceScreenshotException) {
-                Screenshot actual = (Screenshot) joinPoint.getArgs()[1];
+                Screenshot actual = (Screenshot) joinPoint.getArgs()[0];
+                String path = (String) joinPoint.getArgs()[1];
                 String body = new AttachmentBuilder()
                         .withId("NL-" + uuid)
+                        .withPath(path)
                         .withActual(toBase64String(actual.getImage()))
                         .build();
                 getLifecycle().updateStep(uuid, s -> s.setStatus(Status.FAILED));
-                getLifecycle().addAttachment("Actual", "text/html", ".html", body.getBytes(UTF_8));
+                getLifecycle().addAttachment("No reference", "text/html", ".html", body.getBytes(UTF_8));
             } else {
                 getLifecycle().updateStep(uuid, s -> s.setStatus(getStatus(throwable).orElse(Status.BROKEN))
                         .setStatusDetails(getStatusDetails(throwable).orElse(null)));
@@ -117,15 +117,17 @@ public class ScreenshotAssertionsAspects {
                 ImageDiff diff = (ImageDiff) joinPoint.getArgs()[0];
                 Screenshot reference = (Screenshot) joinPoint.getArgs()[1];
                 Screenshot actual = (Screenshot) joinPoint.getArgs()[2];
+                String path = (String) joinPoint.getArgs()[3];
                 String body = new AttachmentBuilder()
                         .withId("NL-" + uuid)
+                        .withPath(path)
                         .withActual(toBase64String(actual.getImage()))
                         .withReference(toBase64String(reference.getImage()))
                         .withDiff(toBase64String(diff.getMarkedImage()))
                         .withDiffSize(valueOf(diff.getDiffSize()))
                         .build();
                 getLifecycle().updateStep(uuid, s -> s.setStatus(Status.FAILED));
-                getLifecycle().addAttachment("Actual", "text/html", ".html", body.getBytes(UTF_8));
+                getLifecycle().addAttachment("Diff", "text/html", ".html", body.getBytes(UTF_8));
             } else {
                 getLifecycle().updateStep(uuid, s -> s.setStatus(getStatus(throwable).orElse(Status.BROKEN))
                         .setStatusDetails(getStatusDetails(throwable).orElse(null)));

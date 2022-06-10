@@ -24,4 +24,10 @@ public interface DevConfig extends Config {
 
     @Key("selenoid.url")
     String selenoidUrl();
+
+    @Key("github.owner")
+    String gitHubOwner();
+
+    @Key("github.repo")
+    String gitHubRepo();
 }

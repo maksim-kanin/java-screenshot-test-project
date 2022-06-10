@@ -11,6 +11,8 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.neuraloom.ui.DevConfig.DEV_CONFIG;
+
 public class AttachmentBuilder {
     private static final String TEMPLATES_DIR = "src/main/resources/templates";
     private static final String ATTACHMENT_TEMPLATE = "screenshot-template.ftl";
@@ -18,6 +20,11 @@ public class AttachmentBuilder {
 
     public AttachmentBuilder withId(String id) {
         root.put("id", id);
+        return this;
+    }
+
+    public AttachmentBuilder withPath(String path) {
+        root.put("path", path);
         return this;
     }
 
@@ -42,6 +49,8 @@ public class AttachmentBuilder {
     }
 
     public String build() {
+        root.put("owner", DEV_CONFIG.gitHubOwner());
+        root.put("repo", DEV_CONFIG.gitHubRepo());
         String result;
         try {
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);

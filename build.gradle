@@ -44,6 +44,9 @@ allure {
     }
 }
 
+def CL_DIR = "${buildDir}/allure/commandline"
+def BIN_DIR = "$CL_DIR/bin"
+
 tasks.withType(Test) {
     systemProperties(System.getProperties())
     useJUnitPlatform()
@@ -52,13 +55,26 @@ tasks.withType(Test) {
             'junit.jupiter.execution.parallel.mode.default'            : 'concurrent',
             'junit.jupiter.execution.parallel.mode.classes.default'    : 'concurrent',
             'junit.jupiter.execution.parallel.config.strategy'         : 'fixed',
-            'junit.jupiter.execution.parallel.config.fixed.parallelism': 3
+            'junit.jupiter.execution.parallel.config.fixed.parallelism': 3,
+            'allure.results.directory'                                 : "$BIN_DIR/allure-results"
     ]
 }
 
 task deleteAllure(type: Delete) {
-    delete "${buildDir}/reports/allure-report"
-    delete "${buildDir}/allure-results"
+    delete "$BIN_DIR/allure-results"
+    delete "$BIN_DIR/report"
+}
+
+task copyGitHubPlugin(type: Exec) {
+    def pluginsDir = "$CL_DIR/plugins"
+    commandLine 'sh', '-c', "mkdir -p $pluginsDir && " +
+            "tar -xf github-plugin.tar -C $pluginsDir && " +
+            "echo '\n  - github-plugin' >> $CL_DIR/config/allure.yml"
+}
+
+task buildAllureReport(type: Exec) {
+    workingDir "$BIN_DIR"
+    commandLine 'sh', '-c', './allure generate -o report --clean'
 }
 
 testClasses.finalizedBy(deleteAllure)

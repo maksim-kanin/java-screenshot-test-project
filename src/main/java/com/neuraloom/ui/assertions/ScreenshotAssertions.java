@@ -10,9 +10,11 @@ import ru.yandex.qatools.ashot.Screenshot;
 
 import javax.annotation.Nullable;
 
+import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
+
 public class ScreenshotAssertions implements BeforeEachCallback, AfterTestExecutionCallback {
     private final Browser browser;
-    private String methodName;
+    private String folder;
 
     public ScreenshotAssertions(Browser browser) {
         this.browser = browser;
@@ -20,8 +22,9 @@ public class ScreenshotAssertions implements BeforeEachCallback, AfterTestExecut
 
     @Override
     public void beforeEach(ExtensionContext context) {
-        //TODO переложить в контекст
-        methodName = context.getRequiredTestMethod().getName();
+        ExtensionContext.Store store = context.getStore(create(context.getUniqueId()));
+        store.put("folder", context.getRequiredTestMethod().getName());
+        folder = store.get("folder", String.class);
     }
 
     public void compareElement(String name, By selector) {
@@ -33,12 +36,12 @@ public class ScreenshotAssertions implements BeforeEachCallback, AfterTestExecut
     }
 
     private void compare(String name, By selector) {
-        ScreenShooter shooter = new ScreenShooter(browser, methodName);
+        ScreenShooter shooter = new ScreenShooter(browser, folder, name);
         Screenshot actual = getActual(shooter, selector);
-        if (!shooter.isScreenshotFound(name)) {
-            shooter.save(name, actual);
+        if (!shooter.isScreenshotFound()) {
+            shooter.save(actual);
         } else {
-            Screenshot expected = shooter.getScreenshot(name);
+            Screenshot expected = shooter.getScreenshot();
             shooter.compare(expected, actual);
         }
     }
