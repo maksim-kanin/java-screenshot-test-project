@@ -6,17 +6,21 @@
             .getElementsByClassName("carousel-item active")[0].style.transform = 'scale(' + sliderValue + ')';
     }
 
-    function checkCredentials() {
+    function checkUpdates() {
+        let screenshot = localStorage.getItem("${id}-actual")
         let token = localStorage.getItem("gitHubToken")
         let updateButton = document.getElementById("${id}-update")
         if (token == null) {
             updateButton.setAttribute("disabled", "")
-            updateButton.setAttribute("data-mdb-toggle", "tooltip")
-            updateButton.setAttribute("data-mdb-placement", "bottom")
-            updateButton.setAttribute("title", "Please, specify GitHub token!")
-            updateButton.innerHTML = "Disabled";
+            updateButton.innerHTML = "Fill GitHub tab";
+        }
+        if (screenshot === "updated") {
+            updateButton.setAttribute("disabled", "")
+            updateButton.innerHTML = "Updated!";
         }
     }
+
+    checkUpdates()
 
     async function save() {
         let branchName = document.getElementById("${id}-branch-input").value
@@ -63,5 +67,6 @@
         } else {
             alert("Error: " + response.status);
         }
+        localStorage.setItem("${id}-actual", "updated")
     }
 </script>

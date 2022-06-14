@@ -5,3 +5,4 @@ firefox.version=${forefox.version}
 selenoid.url=${selenoid.url}
 github.owner=${github.owner}
 owner.repo=${github.repo}
+threads.count=${threads.count}

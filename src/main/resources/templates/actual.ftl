@@ -9,8 +9,7 @@
                     <i class="fas fa-camera-retro"></i> Actual
                 </button>
                 <button id="${id}-update" class="badge rounded-pill badge-info"
-                        data-mdb-toggle="modal" data-mdb-target="#${id}-modal"
-                        onmouseover="checkCredentials()">
+                        data-mdb-toggle="modal" data-mdb-target="#${id}-modal">
                     <i class="fas fa-save"></i> Update
                 </button>
             </h4>

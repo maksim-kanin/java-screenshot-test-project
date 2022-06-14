@@ -30,4 +30,7 @@ public interface DevConfig extends Config {
 
     @Key("github.repo")
     String gitHubRepo();
+
+    @Key("threads.count")
+    int threadsCount();
 }

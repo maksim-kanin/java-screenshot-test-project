@@ -21,6 +21,7 @@ def FREEMARKER = "2.3.31"
 
 dependencies {
     implementation("org.junit.jupiter:junit-jupiter:$JUNIT",
+            "org.junit.jupiter:junit-jupiter-engine:$JUNIT",
             "com.codeborne:selenide:$SELENIDE",
             "org.aeonbits.owner:owner:$OWNER",
             "ru.yandex.qatools.ashot:ashot:$ASHOT",
@@ -28,7 +29,6 @@ dependencies {
             "org.aspectj:aspectjweaver:$ASPECTJ",
             "org.aspectj:aspectjrt:$ASPECTJ",
             "org.freemarker:freemarker:$FREEMARKER")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$JUNIT")
 }
 
 allure {
@@ -51,12 +51,12 @@ tasks.withType(Test) {
     systemProperties(System.getProperties())
     useJUnitPlatform()
     systemProperties += [
-            'junit.jupiter.execution.parallel.enabled'                 : true,
-            'junit.jupiter.execution.parallel.mode.default'            : 'concurrent',
-            'junit.jupiter.execution.parallel.mode.classes.default'    : 'concurrent',
-            'junit.jupiter.execution.parallel.config.strategy'         : 'fixed',
-            'junit.jupiter.execution.parallel.config.fixed.parallelism': 3,
-            'allure.results.directory'                                 : "$BIN_DIR/allure-results"
+            'junit.jupiter.execution.parallel.enabled'             : true,
+            'junit.jupiter.execution.parallel.mode.default'        : 'concurrent',
+            'junit.jupiter.execution.parallel.mode.classes.default': 'concurrent',
+            'junit.jupiter.execution.parallel.config.strategy'     : 'custom',
+            'junit.jupiter.execution.parallel.config.custom.class' : 'com.neuraloom.ui.browser.CustomStrategy',
+            'allure.results.directory'                             : "$BIN_DIR/allure-results"
     ]
 }
 
