@@ -1,7 +1,10 @@
 <div class="carousel-item" data-mdb-interval="1000000000">
     <figure class="figure">
-        <img src="data:image/png;base64,${reference}"
-             class="rounded img-fluid"
+        <h4>
+            <button class="badge rounded-pill badge-light" onclick="scaleReference()">Zoom</button>
+        </h4>
+        <img id="${id}-reference" src="data:image/png;base64,${reference}"
+             class="img-fluid"
              alt="Reference"/>
         <figcaption class="figure-caption">
             <h4>

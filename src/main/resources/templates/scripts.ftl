@@ -1,11 +1,5 @@
 <#assign baseUrl="https://api.github.com">
 <script>
-    document.getElementById("${id}-slider").onchange = function (e) {
-        let sliderValue = e.target.value;
-        document.getElementById("${id}")
-            .getElementsByClassName("carousel-item active")[0].style.transform = 'scale(' + sliderValue + ')';
-    }
-
     function checkUpdates() {
         let screenshot = localStorage.getItem("${id}-actual")
         let token = localStorage.getItem("gitHubToken")
@@ -68,5 +62,17 @@
             alert("Error: " + response.status);
         }
         localStorage.setItem("${id}-actual", "updated")
+    }
+
+    function scaleActual() {
+        $("#${id}-actual").scale()
+    }
+
+    function scaleDiff() {
+        $("#${id}-diff").scale()
+    }
+
+    function scaleReference() {
+        $("#${id}-reference").scale()
     }
 </script>

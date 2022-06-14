@@ -1,7 +1,10 @@
 <div class="carousel-item active" data-mdb-interval="1000000000">
     <figure class="figure">
+        <h4>
+            <button class="badge rounded-pill badge-light" onclick="scaleActual()">Zoom</button>
+        </h4>
         <img id="${id}-actual" src="data:image/png;base64,${actual}"
-             class="rounded img-fluid"
+             class="img-fluid"
              alt="Actual"/>
         <figcaption class="figure-caption">
             <h4>
