@@ -151,8 +151,8 @@ public class MainPageTests {
 #### Screenshot
 
 - __NoReferenceScreenshotError and ScreenshotDiffError__ - errors classes
-- __AttachmentBuilder__ - screenshot builder (based on [FreeMarker](https://freemarker.apache.org/)), writes data in __
-  resources/templates/screenshot-template.ftl__ template
+- __AttachmentBuilder__ - screenshot builder (based on [FreeMarker](https://freemarker.apache.org/)), writes data in
+  __resources/templates/screenshot-template.ftl__ template
 - __ScreenShooter__ - __aShot__ wrapper, takes screenshot and throws screenshot errors
 
 ### Possible improvements
