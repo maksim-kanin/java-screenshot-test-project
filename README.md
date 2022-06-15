@@ -7,6 +7,7 @@
 - ![Allure](https://img.shields.io/badge/Allure-orange)
 - ![JUnit 5](https://img.shields.io/badge/JUnit-5-green)
 - [aShot](https://github.com/pazone/ashot) + GitHub plugin
+- [Selenide](https://selenide.org/)
 
 ### Setup:
 
