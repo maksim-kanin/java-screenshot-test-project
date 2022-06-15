@@ -29,7 +29,6 @@
 - "LOGIN" adds information to __localStorage__ of a browser:
   ![local_storage.png](readme/local_storage.png)
 - "LOGOUT" invokes __localStorage.clear()__ method
-- how to use and maintain the plugin:
 
 ### GitHub plugin usage
 
@@ -41,8 +40,7 @@
 4. Put the file into the root
 5. Execute __copyGitHubPlugin__ task <br>
    ![copy_plugin.png](readme/copy_plugin.png)
-6. Check plugin files are present in __build/allure/commandline/config/allure.yml__ and __
-   build/allure/commandline/plugins__
+6. Check plugin files are present in __build/allure/commandline/config/allure.yml and build/allure/commandline/plugins__
    folder
 
 ### How to write tests
