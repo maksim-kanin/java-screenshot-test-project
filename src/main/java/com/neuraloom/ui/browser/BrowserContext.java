@@ -1,6 +1,5 @@
 package com.neuraloom.ui.browser;
 
-import com.neuraloom.ui.DevConfig;
 import org.junit.jupiter.api.extension.*;
 
 import java.lang.reflect.Method;
@@ -15,14 +14,7 @@ class BrowserContext implements TestTemplateInvocationContextProvider {
         return new TestTemplateInvocationContext() {
             @Override
             public String getDisplayName(int invocationIndex) {
-                boolean isChrome = "chrome".equals(browser);
-                String version = isChrome ? DevConfig.DEV_CONFIG.chromeVersion() : DevConfig.DEV_CONFIG.firefoxVersion();
-                return String.format("[%s][ver: %s][width: %s, height: %s] %s",
-                        browser.toUpperCase(),
-                        version,
-                        DevConfig.DEV_CONFIG.browserWidth(),
-                        DevConfig.DEV_CONFIG.browserHeight(),
-                        context.getDisplayName());
+                return String.format("[%s] %s", browser.toUpperCase(), context.getDisplayName());
             }
 
             @Override

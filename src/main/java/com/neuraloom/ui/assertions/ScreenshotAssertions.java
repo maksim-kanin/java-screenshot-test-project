@@ -2,7 +2,6 @@ package com.neuraloom.ui.assertions;
 
 import com.neuraloom.ui.browser.Browser;
 import com.neuraloom.ui.screenshot.ScreenShooter;
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openqa.selenium.By;
@@ -12,7 +11,7 @@ import javax.annotation.Nullable;
 
 import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
 
-public class ScreenshotAssertions implements BeforeEachCallback, AfterTestExecutionCallback {
+public class ScreenshotAssertions implements BeforeEachCallback {
     private final Browser browser;
     private String folder;
 
@@ -50,9 +49,5 @@ public class ScreenshotAssertions implements BeforeEachCallback, AfterTestExecut
         return selector != null ?
                 shooter.elementScreenshot(selector) :
                 shooter.pageScreenshot();
-    }
-
-    @Override
-    public void afterTestExecution(ExtensionContext context) {
     }
 }

@@ -1,21 +1,22 @@
 <div class="carousel-item active" data-mdb-interval="1000000000">
     <figure class="figure">
-        <h4>
-            <button class="badge rounded-pill badge-light" onclick="scaleActual()">Zoom</button>
-        </h4>
+        <div class="controls">
+            <span class="badge rounded-pill badge-light border border-danger">
+              <i class="fas fa-camera-retro" style="color: red"></i> Actual
+            </span>
+        </div>
         <img id="${id}-actual" src="data:image/png;base64,${actual}"
              class="img-fluid"
              alt="Actual"/>
-        <figcaption class="figure-caption">
-            <h4>
-                <button class="badge rounded-pill badge-danger" disabled>
-                    <i class="fas fa-camera-retro"></i> Actual
-                </button>
-                <button id="${id}-update" class="badge rounded-pill badge-info"
-                        data-mdb-toggle="modal" data-mdb-target="#${id}-modal">
-                    <i class="fas fa-save"></i> Update
-                </button>
-            </h4>
-        </figcaption>
+        <div class="controls">
+            <button id="${id}-update" class="button rounded-pill border border-light"
+                    data-mdb-toggle="modal" data-mdb-target="#${id}-modal">
+                <i class="fas fa-save" style="color: royalblue"></i> Update
+            </button>
+            <button class="button rounded-pill border border-light" onclick="scaleActual()">
+                <i class="fas fa-search" style="color: royalblue"></i>
+                Zoom
+            </button>
+        </div>
     </figure>
 </div>

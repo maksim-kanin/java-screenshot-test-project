@@ -1,17 +1,18 @@
 <div class="carousel-item" data-mdb-interval="1000000000">
     <figure class="figure">
-        <h4>
-            <button class="badge rounded-pill badge-light" onclick="scaleReference()">Zoom</button>
-        </h4>
+        <div class="controls">
+            <span class="badge rounded-pill badge-light border border-success">
+              <i class="fas fa-camera-retro" style="color: green"></i> Reference
+            </span>
+        </div>
         <img id="${id}-reference" src="data:image/png;base64,${reference}"
              class="img-fluid"
              alt="Reference"/>
-        <figcaption class="figure-caption">
-            <h4>
-                <button class="badge rounded-pill badge-success" disabled>
-                    <i class="fas fa-camera-retro"></i> Reference
-                </button>
-            </h4>
-        </figcaption>
+        <div class="controls">
+            <button class="button rounded-pill border border-light" onclick="scaleReference()">
+                <i class="fas fa-search" style="color: royalblue"></i>
+                Zoom
+            </button>
+        </div>
     </figure>
 </div>

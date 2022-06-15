@@ -6,11 +6,13 @@
         let updateButton = document.getElementById("${id}-update")
         if (token == null) {
             updateButton.setAttribute("disabled", "")
-            updateButton.innerHTML = "Fill GitHub tab";
+            updateButton.innerHTML = "Fill GitHub tab"
+            updateButton.classList.add("bg-light")
         }
         if (screenshot === "updated") {
             updateButton.setAttribute("disabled", "")
-            updateButton.innerHTML = "Updated!";
+            updateButton.innerHTML = "Updated!"
+            updateButton.classList.add("bg-light")
         }
     }
 
