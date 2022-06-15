@@ -1,8 +1,8 @@
 package com.neuraloom.ui.aspects;
 
 import com.neuraloom.ui.screenshot.AttachmentBuilder;
-import com.neuraloom.ui.screenshot.exceptions.NoReferenceScreenshotException;
-import com.neuraloom.ui.screenshot.exceptions.ScreenshotDiffException;
+import com.neuraloom.ui.screenshot.errors.NoReferenceScreenshotError;
+import com.neuraloom.ui.screenshot.errors.ScreenshotDiffError;
 import io.qameta.allure.Allure;
 import io.qameta.allure.AllureLifecycle;
 import io.qameta.allure.model.Status;
@@ -69,7 +69,7 @@ public class ScreenshotAssertionsAspects {
         try {
             return joinPoint.proceed();
         } catch (Throwable throwable) {
-            if (throwable instanceof NoReferenceScreenshotException) {
+            if (throwable instanceof NoReferenceScreenshotError) {
                 Screenshot actual = (Screenshot) joinPoint.getArgs()[0];
                 String path = (String) joinPoint.getArgs()[1];
                 String body = new AttachmentBuilder()
@@ -113,7 +113,7 @@ public class ScreenshotAssertionsAspects {
         try {
             return joinPoint.proceed();
         } catch (Throwable throwable) {
-            if (throwable instanceof ScreenshotDiffException) {
+            if (throwable instanceof ScreenshotDiffError) {
                 ImageDiff diff = (ImageDiff) joinPoint.getArgs()[0];
                 Screenshot reference = (Screenshot) joinPoint.getArgs()[1];
                 Screenshot actual = (Screenshot) joinPoint.getArgs()[2];

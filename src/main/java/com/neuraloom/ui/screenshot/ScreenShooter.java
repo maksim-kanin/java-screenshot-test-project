@@ -2,8 +2,8 @@ package com.neuraloom.ui.screenshot;
 
 import com.codeborne.selenide.SelenideDriver;
 import com.neuraloom.ui.browser.Browser;
-import com.neuraloom.ui.screenshot.exceptions.NoReferenceScreenshotException;
-import com.neuraloom.ui.screenshot.exceptions.ScreenshotDiffException;
+import com.neuraloom.ui.screenshot.errors.NoReferenceScreenshotError;
+import com.neuraloom.ui.screenshot.errors.ScreenshotDiffError;
 import org.openqa.selenium.By;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
@@ -91,12 +91,12 @@ public class ScreenShooter {
 
     // Aspect method
     private void comparisonFailed(ImageDiff diff, Screenshot reference, Screenshot actual, String path) {
-        throw new ScreenshotDiffException();
+        throw new ScreenshotDiffError();
     }
 
     // Aspect method
     private void noReference(Screenshot screenshot, String path) {
-        throw new NoReferenceScreenshotException();
+        throw new NoReferenceScreenshotError();
     }
 
     private String screenshotPath() {
