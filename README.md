@@ -109,9 +109,9 @@ public class MainPageTests {
 ```
 
 2. Run tests
-3. First time you will see an __No reference screenshot found!__ errors
-4. Open folders with screenshots (location: __resources/<TEST_METHOD_NAME>/<BROWSER_NAME>/header.png__)
-5. Allow Git tracks screenshots (now they are supposed to be __reference__ screenshots)
+3. First time you will see __No reference screenshot found!__ errors
+4. Open folders with screenshots (location: __resources/<TEST_METHOD_NAME>/<BROWSER_NAME>/<FILE_NAME>.png__)
+5. Allow Git tracks screenshots (they are supposed to be __reference__ screenshots)
 6. Run tests again (you can see __Screenshot comparison failed! See diff in attachment!__ error in case if comparison
    failed)
 7. Execute __buildAllureReport__ task (report location: __build/allure/commandline/bin/report/index.html__)
@@ -130,8 +130,25 @@ public class MainPageTests {
 
 #### Zoom
 
-1. Click on __Zoom__ button and check small screenshots via a lens <br>
-   ![lens.png](readme/lens.png)
+Click on __Zoom__ button and check small screenshots via a lens <br>
+![lens.png](readme/lens.png)
+
+#### Ignore diff
+
+Ignore diff by hash if you can't avoid it
+
+```java
+public class MainPageTests {
+    @BrowserTest({CHROME, FIREFOX})
+    @DisplayName("Open 'https://neuraloom.ai/#employment' and check whole page")
+    @Ignore(hashes = {"-313485312", "122437632"})
+    void shouldSeeRealisticAvatarsPage() {
+        steps.openMainPage()
+                .employment();
+        assertions.comparePage("page");
+    }
+}
+```
 
 ### Main classes
 
@@ -163,4 +180,3 @@ public class MainPageTests {
 - store information about updates globally, not in __localStorage__ (for example: Spring-service)
 - add ignored areas and show them on click
 - soft assertions
-- retries

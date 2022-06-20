@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id "io.qameta.allure" version "2.9.6"
     id "io.freefair.aspectj.post-compile-weaving" version "6.4.1"
+    id "org.gradle.test-retry" version "1.4.0"
 }
 
 group 'ai.neuraloom'
@@ -58,6 +59,16 @@ tasks.withType(Test) {
             'junit.jupiter.execution.parallel.config.custom.class' : 'com.neuraloom.ui.browser.CustomStrategy',
             'allure.results.directory'                             : "$BIN_DIR/allure-results"
     ]
+
+    boolean isCI = System.getenv().containsKey("CI")
+
+    retry {
+        if (isCI) {
+            failOnPassedAfterRetry = true
+            maxFailures = 20
+            maxRetries = 1
+        }
+    }
 }
 
 task deleteAllure(type: Delete) {

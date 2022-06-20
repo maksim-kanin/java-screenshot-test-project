@@ -1,5 +1,6 @@
 package ui;
 
+import com.neuraloom.ui.assertions.Ignore;
 import com.neuraloom.ui.assertions.ScreenshotAssertions;
 import com.neuraloom.ui.browser.Browser;
 import com.neuraloom.ui.browser.BrowserTest;
@@ -34,6 +35,7 @@ public class MainPageTests {
 
     @BrowserTest({CHROME, FIREFOX})
     @DisplayName("Open 'https://neuraloom.ai/#employment' and check whole page")
+    @Ignore(hashes = {"-313485312", "122437632"})
     void shouldSeeRealisticAvatarsPage() {
         steps.openMainPage()
                 .employment();

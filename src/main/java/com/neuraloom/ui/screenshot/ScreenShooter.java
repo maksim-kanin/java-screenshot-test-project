@@ -17,68 +17,83 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static java.util.Arrays.asList;
 
 public class ScreenShooter {
     private static final int DIFF_SIZE_TRIGGER = 30;
-    private static final String PATH_CONTEXT = "src/test/resources/";
-    private final Browser browser;
     private final AShot aShot;
-    private final String folder;
-    private final String name;
     private final SelenideDriver driver;
 
-    public ScreenShooter(Browser browser, String folder, String name) {
-        this.browser = browser;
-        this.folder = folder;
-        this.name = name;
+    public ScreenShooter(Browser browser) {
         this.aShot = new AShot().coordsProvider(new WebDriverCoordsProvider());
         this.driver = browser.getDriver();
     }
 
     public Screenshot elementScreenshot(By selector) {
-        return aShot.takeScreenshot(driver.getWebDriver(), driver.$(selector));
+        Screenshot screenshot = null;
+        for (int i = 0; i < 3; i++) {
+            try {
+                Thread.sleep(300);
+                screenshot = aShot.takeScreenshot(driver.getWebDriver(), driver.$(selector));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return screenshot;
     }
 
     public Screenshot pageScreenshot() {
-        return aShot.takeScreenshot(driver.getWebDriver());
+        Screenshot screenshot = null;
+        for (int i = 0; i < 3; i++) {
+            try {
+                Thread.sleep(300);
+                screenshot = aShot.takeScreenshot(driver.getWebDriver());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return screenshot;
     }
 
-    public boolean isScreenshotFound() {
-        Path path = Paths.get(screenshotPath());
-        return Files.exists(path);
+    public boolean isScreenshotFound(String path) {
+        return Files.exists(Paths.get(path));
     }
 
-    public void save(Screenshot screenshot) {
+    public void save(Screenshot screenshot, String path) {
+        String browserDir = path.split("[\\w-]+\\.png")[0];
         try {
-            File testDir = new File(resolveBrowserDir());
+            File testDir = new File(browserDir);
             if (!testDir.exists()) {
                 testDir.mkdirs();
             }
-            Path path = Files.createFile(Paths.get(screenshotPath()));
-            ImageIO.write(screenshot.getImage(), "png", new File(path.toString()));
+            ImageIO.write(screenshot.getImage(), "png", new File(Files.createFile(Paths.get(path)).toString()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        noReference(screenshot, screenshotPath());
+        noReference(screenshot, path);
     }
 
-    public void compare(Screenshot reference, Screenshot actual) {
+    public void compare(Screenshot reference, Screenshot actual, String path, String[] ignoredHashes) {
         ImageDiff diff = new ImageDiffer()
                 .withDiffMarkupPolicy(new PointsMarkupPolicy().withDiffColor(Color.ORANGE))
                 .makeDiff(reference, actual)
                 .withDiffSizeTrigger(DIFF_SIZE_TRIGGER);
         if (diff.hasDiff()) {
-            comparisonFailed(diff, reference, actual, screenshotPath());
+            if (asList(ignoredHashes).contains(String.valueOf(diff.hashCode()))) {
+                comparisonPassed();
+            } else {
+                comparisonFailed(diff, reference, actual, path, String.valueOf(diff.hashCode()));
+            }
         } else {
             comparisonPassed();
         }
     }
 
-    public Screenshot getScreenshot() {
+    public Screenshot getScreenshot(String path) {
         try {
-            return new Screenshot(ImageIO.read(new File(screenshotPath())));
+            return new Screenshot(ImageIO.read(new File(path)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -90,28 +105,12 @@ public class ScreenShooter {
     }
 
     // Aspect method
-    private void comparisonFailed(ImageDiff diff, Screenshot reference, Screenshot actual, String path) {
+    private void comparisonFailed(ImageDiff diff, Screenshot reference, Screenshot actual, String path, String hash) {
         throw new ScreenshotDiffError();
     }
 
     // Aspect method
     private void noReference(Screenshot screenshot, String path) {
         throw new NoReferenceScreenshotError();
-    }
-
-    private String screenshotPath() {
-        return resolveBrowserDir() + "/" + name + ".png";
-    }
-
-    private String resolveBrowserDir() {
-        return PATH_CONTEXT + folder + "/" + resolveBrowser();
-    }
-
-    private String resolveBrowser() {
-        return isChrome() ? "chrome" : "firefox";
-    }
-
-    private boolean isChrome() {
-        return "chrome".equals(browser.getName());
     }
 }

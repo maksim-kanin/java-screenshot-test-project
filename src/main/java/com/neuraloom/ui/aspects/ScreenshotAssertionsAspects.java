@@ -118,6 +118,7 @@ public class ScreenshotAssertionsAspects {
                 Screenshot reference = (Screenshot) joinPoint.getArgs()[1];
                 Screenshot actual = (Screenshot) joinPoint.getArgs()[2];
                 String path = (String) joinPoint.getArgs()[3];
+                String hash = (String) joinPoint.getArgs()[4];
                 String body = new AttachmentBuilder()
                         .withId("NL-" + uuid)
                         .withPath(path)
@@ -127,7 +128,7 @@ public class ScreenshotAssertionsAspects {
                         .withDiffSize(valueOf(diff.getDiffSize()))
                         .build();
                 getLifecycle().updateStep(uuid, s -> s.setStatus(Status.FAILED));
-                getLifecycle().addAttachment("Diff", "text/html", ".html", body.getBytes(UTF_8));
+                getLifecycle().addAttachment("Diff hash: " + hash, "text/html", ".html", body.getBytes(UTF_8));
             } else {
                 getLifecycle().updateStep(uuid, s -> s.setStatus(getStatus(throwable).orElse(Status.BROKEN))
                         .setStatusDetails(getStatusDetails(throwable).orElse(null)));
