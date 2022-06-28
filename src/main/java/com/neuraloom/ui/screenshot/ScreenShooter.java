@@ -5,11 +5,14 @@ import com.neuraloom.ui.browser.Browser;
 import com.neuraloom.ui.screenshot.errors.NoReferenceScreenshotError;
 import com.neuraloom.ui.screenshot.errors.ScreenshotDiffError;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.comparison.ImageDiff;
 import ru.yandex.qatools.ashot.comparison.ImageDiffer;
 import ru.yandex.qatools.ashot.comparison.PointsMarkupPolicy;
+import ru.yandex.qatools.ashot.coordinates.Coords;
+import ru.yandex.qatools.ashot.coordinates.CoordsProvider;
 import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
 
 import javax.imageio.ImageIO;
@@ -18,17 +21,23 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 
 public class ScreenShooter {
     private static final int DIFF_SIZE_TRIGGER = 30;
+    private final CoordsProvider coordsProvider = new WebDriverCoordsProvider();
     private final AShot aShot;
     private final SelenideDriver driver;
+    private final WebDriver webDriver;
 
     public ScreenShooter(Browser browser) {
-        this.aShot = new AShot().coordsProvider(new WebDriverCoordsProvider());
+        this.aShot = new AShot().coordsProvider(coordsProvider);
         this.driver = browser.getDriver();
+        this.webDriver = driver.getWebDriver();
     }
 
     public Screenshot elementScreenshot(By selector) {
@@ -36,7 +45,7 @@ public class ScreenShooter {
         for (int i = 0; i < 3; i++) {
             try {
                 Thread.sleep(300);
-                screenshot = aShot.takeScreenshot(driver.getWebDriver(), driver.$(selector));
+                screenshot = aShot.takeScreenshot(webDriver, driver.$(selector));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -49,7 +58,7 @@ public class ScreenShooter {
         for (int i = 0; i < 3; i++) {
             try {
                 Thread.sleep(300);
-                screenshot = aShot.takeScreenshot(driver.getWebDriver());
+                screenshot = aShot.takeScreenshot(webDriver, driver.$("body"));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -61,7 +70,8 @@ public class ScreenShooter {
         return Files.exists(Paths.get(path));
     }
 
-    public void save(Screenshot screenshot, String path) {
+    public void save(Screenshot screenshot, ScreenshotDetails details) {
+        String path = details.getPath();
         String browserDir = path.split("[\\w-]+\\.png")[0];
         try {
             File testDir = new File(browserDir);
@@ -72,19 +82,19 @@ public class ScreenShooter {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        noReference(screenshot, path);
+        noReference(screenshot, details);
     }
 
-    public void compare(Screenshot reference, Screenshot actual, String path, String[] ignoredHashes) {
+    public void compare(Screenshot reference, Screenshot actual, ScreenshotDetails details) {
         ImageDiff diff = new ImageDiffer()
                 .withDiffMarkupPolicy(new PointsMarkupPolicy().withDiffColor(Color.ORANGE))
                 .makeDiff(reference, actual)
                 .withDiffSizeTrigger(DIFF_SIZE_TRIGGER);
         if (diff.hasDiff()) {
-            if (asList(ignoredHashes).contains(String.valueOf(diff.hashCode()))) {
+            if (asList(details.getIgnoredHashes()).contains(String.valueOf(diff.hashCode()))) {
                 comparisonPassed();
             } else {
-                comparisonFailed(diff, reference, actual, path, String.valueOf(diff.hashCode()));
+                comparisonFailed(diff, reference, actual, details.withHash(String.valueOf(diff.hashCode())));
             }
         } else {
             comparisonPassed();
@@ -99,18 +109,25 @@ public class ScreenShooter {
         }
     }
 
+    public Set<Coords> getCoords(By... elements) {
+        Set<Coords> coords = new HashSet<>();
+        Arrays.stream(elements)
+                .forEach(el -> coords.add(coordsProvider.ofElement(webDriver, driver.$(el))));
+        return coords;
+    }
+
     // Aspect method
     private void comparisonPassed() {
         // do nothing
     }
 
     // Aspect method
-    private void comparisonFailed(ImageDiff diff, Screenshot reference, Screenshot actual, String path, String hash) {
+    private void comparisonFailed(ImageDiff diff, Screenshot reference, Screenshot actual, ScreenshotDetails details) {
         throw new ScreenshotDiffError();
     }
 
     // Aspect method
-    private void noReference(Screenshot screenshot, String path) {
+    private void noReference(Screenshot screenshot, ScreenshotDetails details) {
         throw new NoReferenceScreenshotError();
     }
 }

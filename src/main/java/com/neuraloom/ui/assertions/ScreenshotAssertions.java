@@ -2,13 +2,16 @@ package com.neuraloom.ui.assertions;
 
 import com.neuraloom.ui.browser.Browser;
 import com.neuraloom.ui.screenshot.ScreenShooter;
+import com.neuraloom.ui.screenshot.ScreenshotDetails;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openqa.selenium.By;
 import ru.yandex.qatools.ashot.Screenshot;
+import ru.yandex.qatools.ashot.coordinates.Coords;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.util.Set;
 
 import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
 
@@ -37,23 +40,29 @@ public class ScreenshotAssertions implements BeforeEachCallback {
         folder = store.get("folder", String.class);
     }
 
-    public void compareElement(String id, By selector) {
-        compare(id, selector);
+    public void compareElement(String id, By element, By... ignoredElements) {
+        compare(id, element, ignoredElements);
     }
 
-    public void comparePage(String id) {
-        compare(id, null);
+    public void comparePage(String id, By... ignoredElements) {
+        compare(id, null, ignoredElements);
     }
 
-    private void compare(String id, By selector) {
+    private void compare(String id, By element, By... ignoredElements) {
         ScreenShooter shooter = new ScreenShooter(browser);
-        Screenshot actual = getActual(shooter, selector);
+        Set<Coords> ignoredAreas = shooter.getCoords(ignoredElements);
+        Screenshot actual = getActual(shooter, element);
+        actual.setIgnoredAreas(ignoredAreas);
         String path = screenshotPath(id);
+        ScreenshotDetails details = new ScreenshotDetails()
+                .withIgnoredAreas(ignoredAreas)
+                .withPath(path);
         if (!shooter.isScreenshotFound(path)) {
-            shooter.save(actual, path);
+            shooter.save(actual, details);
         } else {
             Screenshot expected = shooter.getScreenshot(path);
-            shooter.compare(expected, actual, path, ignoredHashes);
+            expected.setIgnoredAreas(ignoredAreas);
+            shooter.compare(expected, actual, details.withIgnoredHashes(ignoredHashes));
         }
     }
 

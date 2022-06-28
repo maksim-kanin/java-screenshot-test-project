@@ -4,12 +4,14 @@ import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import ru.yandex.qatools.ashot.coordinates.Coords;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static com.neuraloom.ui.DevConfig.DEV_CONFIG;
 
@@ -45,6 +47,11 @@ public class AttachmentBuilder {
 
     public AttachmentBuilder withDiffSize(String diffSize) {
         root.put("diffSize", diffSize);
+        return this;
+    }
+
+    public AttachmentBuilder withIgnoredAreas(Set<Coords> ignoredAreas) {
+        root.put("ignoredAreas", ignoredAreas.toString());
         return this;
     }
 

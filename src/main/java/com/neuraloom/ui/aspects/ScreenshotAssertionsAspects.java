@@ -1,6 +1,7 @@
 package com.neuraloom.ui.aspects;
 
 import com.neuraloom.ui.screenshot.AttachmentBuilder;
+import com.neuraloom.ui.screenshot.ScreenshotDetails;
 import com.neuraloom.ui.screenshot.errors.NoReferenceScreenshotError;
 import com.neuraloom.ui.screenshot.errors.ScreenshotDiffError;
 import io.qameta.allure.Allure;
@@ -71,11 +72,12 @@ public class ScreenshotAssertionsAspects {
         } catch (Throwable throwable) {
             if (throwable instanceof NoReferenceScreenshotError) {
                 Screenshot actual = (Screenshot) joinPoint.getArgs()[0];
-                String path = (String) joinPoint.getArgs()[1];
+                ScreenshotDetails details = (ScreenshotDetails) joinPoint.getArgs()[1];
                 String body = new AttachmentBuilder()
                         .withId("NL-" + uuid)
-                        .withPath(path)
+                        .withPath(details.getPath())
                         .withActual(toBase64String(actual.getImage()))
+                        .withIgnoredAreas(details.getIgnoredAreas())
                         .build();
                 getLifecycle().updateStep(uuid, s -> s.setStatus(Status.FAILED));
                 getLifecycle().addAttachment("No reference", "text/html", ".html", body.getBytes(UTF_8));
@@ -117,18 +119,18 @@ public class ScreenshotAssertionsAspects {
                 ImageDiff diff = (ImageDiff) joinPoint.getArgs()[0];
                 Screenshot reference = (Screenshot) joinPoint.getArgs()[1];
                 Screenshot actual = (Screenshot) joinPoint.getArgs()[2];
-                String path = (String) joinPoint.getArgs()[3];
-                String hash = (String) joinPoint.getArgs()[4];
+                ScreenshotDetails details = (ScreenshotDetails) joinPoint.getArgs()[3];
                 String body = new AttachmentBuilder()
                         .withId("NL-" + uuid)
-                        .withPath(path)
+                        .withPath(details.getHash())
                         .withActual(toBase64String(actual.getImage()))
                         .withReference(toBase64String(reference.getImage()))
                         .withDiff(toBase64String(diff.getMarkedImage()))
                         .withDiffSize(valueOf(diff.getDiffSize()))
+                        .withIgnoredAreas(details.getIgnoredAreas())
                         .build();
                 getLifecycle().updateStep(uuid, s -> s.setStatus(Status.FAILED));
-                getLifecycle().addAttachment("Diff hash: " + hash, "text/html", ".html", body.getBytes(UTF_8));
+                getLifecycle().addAttachment("Diff hash: " + details.getHash(), "text/html", ".html", body.getBytes(UTF_8));
             } else {
                 getLifecycle().updateStep(uuid, s -> s.setStatus(getStatus(throwable).orElse(Status.BROKEN))
                         .setStatusDetails(getStatusDetails(throwable).orElse(null)));

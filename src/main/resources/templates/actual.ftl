@@ -17,6 +17,10 @@
                 <i class="fas fa-search" style="color: royalblue"></i>
                 Zoom
             </button>
+            <button class="button rounded-pill border border-light" onclick="showActualIgnoring()">
+                <i class="fas fa-adjust" style="color: royalblue"></i>
+                Show ignoring
+            </button>
         </div>
     </figure>
 </div>

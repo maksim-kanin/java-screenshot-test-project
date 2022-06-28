@@ -5,7 +5,12 @@
         let clazz;
         if (!element.is('img')) {
             console.log('Target element is not an image.')
-            return
+            return;
+        }
+
+        if ($("#img-fluidBlowupLens").length > 0) {
+            document.getElementById("img-fluidBlowupLens").remove();
+            return;
         }
 
         let imageURL = element.attr('src')

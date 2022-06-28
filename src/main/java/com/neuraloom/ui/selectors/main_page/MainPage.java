@@ -9,4 +9,6 @@ public class MainPage {
     public By mainHeader = cssSelector(".v-toolbar__content");
     public By chatButton = cssSelector("div#hubspot-messages-iframe-container");
     public By employmentDescriptionLabel = xpath("//div[contains(text(),'Create Omnichannel')]");
+    public By recruitEmployeeButton = cssSelector(".join-alpha > div");
+    public By employmentHeaderBlock = cssSelector("header a[href='/#employment'] span");
 }

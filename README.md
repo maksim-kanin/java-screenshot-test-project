@@ -14,8 +14,8 @@
 - __rename dev.properties.example__ => __dev.properties__ and specify properties:
   ```properties 
   baseURL=https://neuraloom.ai/
-  browser.width=1800
-  browser.height=1100
+  browser.width=1920
+  browser.height=1080
   chrome.version=101
   firefox.version=100
   selenoid.url=http://localhost:4444/wd/hub
@@ -175,8 +175,6 @@ public class MainPageTests {
 
 ### Possible improvements
 
-- GIF file with actual/reference/diff
-- ignore specific diff by hash
 - store information about updates globally, not in __localStorage__ (for example: Spring-service)
 - add ignored areas and show them on click
 - soft assertions
