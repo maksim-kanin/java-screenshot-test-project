@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @TestTemplate
 @ExtendWith(BrowserContext.class)
-public @interface BrowserTest {
+public @interface Browsers {
     String[] value();
 }

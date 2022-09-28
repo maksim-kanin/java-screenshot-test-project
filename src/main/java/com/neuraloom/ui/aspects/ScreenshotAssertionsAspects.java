@@ -29,28 +29,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Aspect
 public class ScreenshotAssertionsAspects {
-    private static final InheritableThreadLocal<AllureLifecycle> LIFECYCLE = new InheritableThreadLocal<>() {
-        @Override
-        protected AllureLifecycle initialValue() {
-            return Allure.getLifecycle();
-        }
-    };
-
-    public static AllureLifecycle getLifecycle() {
-        return LIFECYCLE.get();
-    }
-
-    private static String toBase64String(BufferedImage image) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        try {
-            ImageIO.write(image, "png", stream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        byte[] bytes = stream.toByteArray();
-        return Base64.getEncoder().encodeToString(bytes);
-    }
-
     @Pointcut("execution(* com.neuraloom.ui.screenshot.ScreenShooter.noReference(..))")
     public void noRefPointcut() {
     }
@@ -108,6 +86,28 @@ public class ScreenshotAssertionsAspects {
         }
     }
 
+    private static final InheritableThreadLocal<AllureLifecycle> LIFECYCLE = new InheritableThreadLocal<>() {
+        @Override
+        protected AllureLifecycle initialValue() {
+            return Allure.getLifecycle();
+        }
+    };
+
+    public static AllureLifecycle getLifecycle() {
+        return LIFECYCLE.get();
+    }
+
+    private static String toBase64String(BufferedImage image) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(image, "png", stream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        byte[] bytes = stream.toByteArray();
+        return Base64.getEncoder().encodeToString(bytes);
+    }
+
     @Around("hasDiffPointcut()")
     public Object hasDiffStep(ProceedingJoinPoint joinPoint) throws Throwable {
         String uuid = UUID.randomUUID().toString();
@@ -122,7 +122,7 @@ public class ScreenshotAssertionsAspects {
                 ScreenshotDetails details = (ScreenshotDetails) joinPoint.getArgs()[3];
                 String body = new AttachmentBuilder()
                         .withId("NL-" + uuid)
-                        .withPath(details.getHash())
+                        .withPath(details.getPath())
                         .withActual(toBase64String(actual.getImage()))
                         .withReference(toBase64String(reference.getImage()))
                         .withDiff(toBase64String(diff.getMarkedImage()))

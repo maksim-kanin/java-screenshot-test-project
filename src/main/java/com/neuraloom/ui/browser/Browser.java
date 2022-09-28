@@ -51,7 +51,7 @@ public class Browser implements BeforeEachCallback, AfterEachCallback {
 
     @Override
     public void beforeEach(ExtensionContext context) {
-        if (context.getRequiredTestMethod().getAnnotation(BrowserTest.class) != null) {
+        if (context.getRequiredTestMethod().getAnnotation(Browsers.class) != null) {
             name = context.getStore(create(context.getUniqueId())).get("browser", String.class);
         }
     }
@@ -66,10 +66,7 @@ public class Browser implements BeforeEachCallback, AfterEachCallback {
     public SelenideDriver getDriver() {
         if (!isCreated()) {
             initDriver();
-            selenideDriver.getWebDriver()
-                    .manage()
-                    .window()
-                    .setSize(new Dimension(DEV_CONFIG.browserWidth(), DEV_CONFIG.browserHeight()));
+            setSize();
         }
         return selenideDriver;
     }
@@ -101,5 +98,12 @@ public class Browser implements BeforeEachCallback, AfterEachCallback {
 
     private boolean isCreated() {
         return selenideDriver != null;
+    }
+
+    private void setSize() {
+        selenideDriver.getWebDriver()
+                .manage()
+                .window()
+                .setSize(new Dimension(DEV_CONFIG.browserWidth(), DEV_CONFIG.browserHeight()));
     }
 }
