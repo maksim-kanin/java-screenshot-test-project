@@ -22,6 +22,7 @@
         let branchName = document.getElementById("${id}-branch-input").value;
         let referencePath = "${path}?ref=" + branchName;
         let url = "${baseUrl}/repos/${owner}/${repo}/contents/" + referencePath;
+        let postUrl = "${baseUrl}/repos/${owner}/${repo}/contents/${path}";
         let body = {
             "branch": branchName,
             "committer": {
@@ -39,12 +40,12 @@
         });
         if (refResponse.ok) {
             let json = await refResponse.json();
-            body.message = "Update screenshot " + referencePath;
+            body.message = "Update screenshot ${path}";
             body.sha = json.sha;
-            await post(url, body);
+            await post(postUrl, body);
         } else {
-            body.message = "Save screenshot " + referencePath;
-            await post(url, body);
+            body.message = "Save screenshot ${path}";
+            await post(postUrl, body);
         }
     }
 
